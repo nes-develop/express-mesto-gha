@@ -11,14 +11,14 @@ class NotFound extends Error {
 
 const setError = (res, err) => {
   if (err.name === 'NotFoundError') {
-    return res.status(errorNotFound).send({ message: `${err.message}` });
+    return res.status(errorNotFound).send({ message: 'Сервер не может найти данные' });
   }
   if (err.name === 'ValidationError' || err.name === 'CastError') {
-    return res.status(errorPost).send({ message: `${err.message}` });
+    return res.status(errorPost).send({ message: 'Переданы некорректные данные' });
   }
-  return res.status(errorServer).send({ message: `${err.message}` });
+  return res.status(errorServer).send({ message: 'Произошла ошибка' });
 };
 
 module.exports = {
-  setError, NotFound,
+  setError, NotFound, errorNotFound
 };
