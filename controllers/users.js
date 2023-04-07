@@ -17,7 +17,6 @@ module.exports.getUserById = (req, res) => {
     .catch((err) => setError(res, err));
 };
 
-
 //Создаем пользователя
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
