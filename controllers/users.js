@@ -1,13 +1,12 @@
 const User = require('../models/user');
 const { setError, NotFound } = require('../utils/utils');
 
-//Получаем всех пользователей
 module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch((err) => setError(res, err));
 };
-//Получаем конкретного пользователя
+
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
     .orFail(() => {
@@ -17,7 +16,6 @@ module.exports.getUserById = (req, res) => {
     .catch((err) => setError(res, err));
 };
 
-//Создаем пользователя
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
@@ -26,7 +24,6 @@ module.exports.createUser = (req, res) => {
     .catch((err) => setError(res, err));
 };
 
-//Обновляем данные по пользователю
 module.exports.updateUserInfo = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
@@ -46,7 +43,6 @@ module.exports.updateUserInfo = (req, res) => {
     .catch((err) => setError(res, err));
 };
 
-//обновляем аватарку
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
