@@ -20,5 +20,5 @@ const setError = (res, err) => {
 };
 
 module.exports = {
-  setError, NotFound, errorNotFound
+  setError, NotFound, errorNotFound,
 };
