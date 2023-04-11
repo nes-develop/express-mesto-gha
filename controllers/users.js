@@ -5,8 +5,23 @@ const {
   NotFound,
   ValidationError,
 } = require('../errors/allErrors');
+// eslint-disable-next-line import/no-unresolved
+const { resStatusConflict, resStatusCreate } = require('../utils/constants');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
+
+function findUser(res, next, userId) {
+  User.findById(userId)
+    .orFail(new NotFound('Пользователь не найден'))
+    .then((user) => res.send({ user }))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new ValidationError('Передан невалидный ID'));
+      } else {
+        next(err);
+      }
+    });
+}
 
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
@@ -15,23 +30,11 @@ module.exports.getAllUsers = (req, res, next) => {
 };
 
 module.exports.getUserById = (req, res, next) => {
-  User.findById(req.params.userId)
-    .orFail(() => {
-      throw new NotFound('Пользователь не найден');
-    })
-    .then((user) => res.send({
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
-      _id: user._id,
-    }))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new ValidationError('Пользователя с указанным id не существует'));
-      } else {
-        next(err);
-      }
-    });
+  findUser(res, next, req.params.userId); // берем пользователя из запроса
+};
+
+module.exports.getUserInfo = (req, res, next) => {
+  findUser(res, next, req.user._id); // берем пользователя из окружения
 };
 
 module.exports.createUser = (req, res, next) => {
@@ -42,8 +45,8 @@ module.exports.createUser = (req, res, next) => {
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
-    }), { new: true, runValidators: true })
-    .then((user) => res.send({
+    }))
+    .then((user) => res.status(resStatusCreate).send({
       email: user.email,
       name: user.name,
       about: user.about,
@@ -51,28 +54,14 @@ module.exports.createUser = (req, res, next) => {
       _id: user._id,
     }))
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         next(new ValidationError('Указаны некорректные данные'));
       } else if (err.code === 11000) {
-        res.status(409).send({ message: `${err.message}` });
+        res.status(resStatusConflict).send({ message: `${err.message}` });
       } else {
         next(err);
       }
     });
-};
-
-module.exports.getUserInfo = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      res.send({
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-        _id: user._id,
-        email: user.email,
-      });
-    })
-    .catch(next);
 };
 
 module.exports.updateUserInfo = (req, res, next) => {
