@@ -38,7 +38,7 @@ module.exports.deleteCard = (req, res, next) => {
         throw new ForbiddenError('Нельзя удалять карту другого пользователя');
       }
       card.remove()
-        .then((card) => res.send({ card }))
+        .then(() => res.send({ card }))
         .catch(next);
     })
     .catch((err) => {
