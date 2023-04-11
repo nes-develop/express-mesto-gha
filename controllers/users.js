@@ -5,7 +5,6 @@ const {
   NotFound,
   ValidationError,
 } = require('../errors/allErrors');
-// eslint-disable-next-line import/no-unresolved
 const { resStatusConflict, resStatusCreate } = require('../utils/constants');
 
 const { NODE_ENV, JWT_SECRET } = process.env;

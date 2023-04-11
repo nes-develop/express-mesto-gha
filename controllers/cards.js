@@ -4,7 +4,6 @@ const {
   NotFound,
   ForbiddenError,
 } = require('../errors/allErrors');
-// eslint-disable-next-line import/no-unresolved
 const { resStatusCreate } = require('../utils/constants');
 
 module.exports.getAllCards = (req, res, next) => {
