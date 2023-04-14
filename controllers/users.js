@@ -4,8 +4,9 @@ const User = require('../models/user');
 const {
   NotFound,
   ValidationError,
+  ConflictError,
 } = require('../errors/allErrors');
-const { resStatusConflict, resStatusCreate } = require('../utils/constants');
+const { resStatusCreate } = require('../utils/constants');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -56,7 +57,7 @@ module.exports.createUser = (req, res, next) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Указаны некорректные данные'));
       } else if (err.code === 11000) {
-        res.status(resStatusConflict).send({ message: `${err.message}` });
+        next(new ConflictError(`Данный ${email} уже существует`));
       } else {
         next(err);
       }
