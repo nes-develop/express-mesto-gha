@@ -58,8 +58,9 @@ module.exports.createUser = (req, res, next) => {
         next(new ValidationError('Указаны некорректные данные'));
       } if (err.code === 11000) {
         next(new ConflictError(`Данный ${email} уже существует`));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
