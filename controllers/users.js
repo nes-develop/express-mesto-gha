@@ -4,7 +4,6 @@ const User = require('../models/user');
 const {
   NotFound,
   ValidationError,
-  ConflictError,
 } = require('../errors/allErrors');
 const { resStatusCreate } = require('../utils/constants');
 
